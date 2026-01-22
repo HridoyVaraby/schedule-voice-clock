@@ -1,12 +1,31 @@
 # 📥 Installation Guide
 
-## Quick Install (Recommended)
+## Option 1: Install from .deb Package (Recommended)
+
+The easiest way to install VoiceClock on Ubuntu/Debian:
+
+```bash
+# Download the .deb package
+wget https://github.com/HridoyVaraby/schedule-voice-clock/releases/download/v1.0.0/voiceclock_1.0.0_all.deb
+
+# Install
+sudo dpkg -i voiceclock_1.0.0_all.deb
+
+# Fix any missing dependencies
+sudo apt-get install -f
+```
+
+That's it! VoiceClock is now installed and will autostart on login.
+
+---
+
+## Option 2: Install from Tarball
 
 ### 1. Download the Latest Release
 
 ```bash
 # Download and extract the latest release
-wget https://github.com/HridoyVaraby/schedule-voice-clock/releases/latest/download/voiceclock-v1.0.0.tar.gz
+wget https://github.com/HridoyVaraby/schedule-voice-clock/releases/download/v1.0.0/voiceclock-v1.0.0.tar.gz
 tar -xzf voiceclock-v1.0.0.tar.gz
 cd schedule-voice-clock
 ```
