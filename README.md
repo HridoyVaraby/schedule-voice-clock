@@ -24,7 +24,7 @@ A lightweight Ubuntu desktop application that announces the time at configurable
 ### System Dependencies (Ubuntu/Debian)
 
 ```bash
-sudo apt install python3-gi gir1.2-gtk-3.0 gir1.2-gst-1.0 \
+sudo apt install python3-gi gir1.2-gtk-3.0 gir1.2-gstreamer-1.0 \
     gir1.2-ayatanaappindicator3-0.1 gstreamer1.0-plugins-good libnotify-bin
 ```
 
