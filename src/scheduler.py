@@ -97,26 +97,23 @@ class TimeAnnouncer:
             hour: Hour in 24-hour format (0-23).
             minute: Minute (0-59).
         """
-        # Convert 24-hour to 12-hour format
-        hour_12 = hour % 12
-        if hour_12 == 0:
-            hour_12 = 12
-        
         language = self.config.get("language", "en")
-        filename = f"{hour_12:02d}_{minute:02d}.ogg"
+        
+        # Use 24-hour format for filename (matching generated files)
+        filename = f"{hour:02d}_{minute:02d}.mp3"
         audio_path = self.assets_dir / "audio" / language / filename
         
         if audio_path.exists():
-            logger.info(f"Announcing time: {hour_12:02d}:{minute:02d} ({language})")
+            logger.info(f"Announcing time: {hour:02d}:{minute:02d} ({language})")
             self.player.play(audio_path)
         else:
-            # Try .mp3 fallback
-            audio_path_mp3 = audio_path.with_suffix('.mp3')
-            if audio_path_mp3.exists():
-                logger.info(f"Announcing time: {hour_12:02d}:{minute:02d} ({language}) [mp3]")
-                self.player.play(audio_path_mp3)
+            # Try .ogg fallback
+            audio_path_ogg = audio_path.with_suffix('.ogg')
+            if audio_path_ogg.exists():
+                logger.info(f"Announcing time: {hour:02d}:{minute:02d} ({language}) [ogg]")
+                self.player.play(audio_path_ogg)
             else:
-                logger.warning(f"Audio file not found: {audio_path} or {audio_path_mp3}")
+                logger.warning(f"Audio file not found: {audio_path} or {audio_path_ogg}")
     
     def force_announce(self) -> None:
         """

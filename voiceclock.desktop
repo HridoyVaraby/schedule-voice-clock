@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=VoiceClock
 Comment=Periodic time announcements in English or Bangla
-Exec=python3 /path/to/schedule-voice-clock/src/main.py
+Exec=python3 /mnt/Personal/Work/Node-Projects/schedule-voice-clock/src/main.py
 Icon=preferences-system-time
 Terminal=false
 Type=Application
