@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=VoiceClock
+Comment=Periodic time announcements in English or Bangla
+Exec=python3 /path/to/schedule-voice-clock/src/main.py
+Icon=preferences-system-time
+Terminal=false
+Type=Application
+Categories=Utility;Accessibility;
+Keywords=time;clock;voice;announcement;accessibility;
+StartupNotify=false
+X-GNOME-Autostart-enabled=true
