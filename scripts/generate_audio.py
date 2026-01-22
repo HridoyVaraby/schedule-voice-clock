@@ -28,14 +28,15 @@ load_dotenv()
 # =============================================================================
 
 # Set to True to only print text without calling API (saves credits)
-DRY_RUN = True
+DRY_RUN = False
 
 # ElevenLabs Voice IDs (find yours at https://elevenlabs.io/voices)
 VOICE_ID_EN = "JBFqnCBsd6RMkjVDRZzb"  # English voice (e.g., "George")
-VOICE_ID_BN = "JBFqnCBsd6RMkjVDRZzb"  # Bangla voice (replace with appropriate ID)
+VOICE_ID_BN = "WiaIVvI1gDL4vT4y7qUU"  # Bangla voice (user specified)
 
-# Model ID (eleven_multilingual_v2 supports Bangla)
-MODEL_ID = "eleven_multilingual_v2"
+# Model ID - Use different models for different languages
+MODEL_ID_EN = "eleven_multilingual_v2"  # For English
+MODEL_ID_BN = "eleven_v3"               # For Bangla (Eleven v3 alpha)
 
 # Output format
 OUTPUT_FORMAT = "mp3_44100_128"
@@ -44,7 +45,7 @@ OUTPUT_FORMAT = "mp3_44100_128"
 API_DELAY = 0.5
 
 # Languages to generate
-GENERATE_ENGLISH = True
+GENERATE_ENGLISH = False  # Already done
 GENERATE_BANGLA = True
 
 # =============================================================================
@@ -219,7 +220,9 @@ def generate_audio_file(
     client,
     text: str,
     voice_id: str,
-    output_path: Path
+    output_path: Path,
+    model_id: str,
+    voice_settings=None
 ) -> bool:
     """
     Generate audio file using ElevenLabs API.
@@ -229,6 +232,8 @@ def generate_audio_file(
         text: Text to convert to speech.
         voice_id: Voice ID to use.
         output_path: Path to save the audio file.
+        model_id: Model ID to use.
+        voice_settings: Optional VoiceSettings for customization.
         
     Returns:
         True if successful.
@@ -236,12 +241,17 @@ def generate_audio_file(
     try:
         from elevenlabs import save
         
-        audio = client.text_to_speech.convert(
-            voice_id=voice_id,
-            text=text,
-            model_id=MODEL_ID,
-            output_format=OUTPUT_FORMAT,
-        )
+        kwargs = {
+            "voice_id": voice_id,
+            "text": text,
+            "model_id": model_id,
+            "output_format": OUTPUT_FORMAT,
+        }
+        
+        if voice_settings:
+            kwargs["voice_settings"] = voice_settings
+        
+        audio = client.text_to_speech.convert(**kwargs)
         
         # Ensure directory exists
         output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -310,7 +320,7 @@ def main():
                 print(f"  {filename}: \"{text}\"")
             else:
                 print(f"  Generating {filename}...", end=" ", flush=True)
-                if generate_audio_file(client, text, VOICE_ID_EN, output_path):
+                if generate_audio_file(client, text, VOICE_ID_EN, output_path, MODEL_ID_EN):
                     print("✅")
                     generated += 1
                 else:
@@ -324,6 +334,19 @@ def main():
         print("📁 BANGLA FILES (বাংলা)")
         print("-" * 40)
         
+        # Import VoiceSettings for v3 model
+        if not DRY_RUN:
+            from elevenlabs import VoiceSettings
+            bangla_voice_settings = VoiceSettings(
+                stability=0.5,  # v3 requires 0.0, 0.5, or 1.0
+                similarity_boost=0.8,
+                style=0.0,
+                speed=0.8,  # Slower speech
+                use_speaker_boost=True
+            )
+        else:
+            bangla_voice_settings = None
+        
         for hour, minute in generate_time_slots():
             filename = f"{hour:02d}_{minute:02d}.mp3"
             output_path = assets_dir / "bn" / filename
@@ -333,7 +356,7 @@ def main():
                 print(f"  {filename}: \"{text}\"")
             else:
                 print(f"  Generating {filename}...", end=" ", flush=True)
-                if generate_audio_file(client, text, VOICE_ID_BN, output_path):
+                if generate_audio_file(client, text, VOICE_ID_BN, output_path, MODEL_ID_BN, bangla_voice_settings):
                     print("✅")
                     generated += 1
                 else:
